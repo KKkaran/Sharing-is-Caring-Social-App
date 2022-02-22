@@ -43,11 +43,36 @@ const ThoughtController = {
     },
     //create a reaction to a thought
     createReaction:(req,res)=>{
-        
+        Thought.findOneAndUpdate(
+            {_id : req.params.thoughtId},
+            {$push : {reactions:req.body}},
+            {new : true}
+        )
+        .then(dbData=>res.json(dbData))
+        .catch(er=>{
+            console.log(er);
+            res.status(500).json(er)
+        })
+    },
+    //delete a reaction to a thought
+    deleteReaction:(req,res)=>{
+        Thought.findOneAndUpdate(
+            {_id:req.params.thoughtId},
+            {$pull:{reactions:{_id:req.params.reactionId}}},
+            {new : true}
+        )
+        .then(dbData=>{
+            if(!dbData)res.json("No thought found by That id")
+            else{
+                
+                res.json(dbData)
+            }
+        })
+        .catch(er=>{
+            console.log(er);
+            res.status(500).json(er)
+        })
     }
-
-    //create a reaction to a thought
-
 
 
 }
