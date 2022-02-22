@@ -6,6 +6,8 @@ router.route("/")
       .get(getAllUsers)
       .post(createUser)
 
+router.route("/:userId")
+      .get(getOneUser)
 
 
 

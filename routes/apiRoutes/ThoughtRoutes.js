@@ -5,6 +5,9 @@ router.route("/")
       .get(getAllThoughts)
       .post(createThought)
 
+router.route("/:thoughtId")
+      .get(getOneThought)
+
 
 
 module.exports = router
