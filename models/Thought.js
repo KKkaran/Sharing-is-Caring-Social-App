@@ -25,7 +25,7 @@ const reactionSchema = new Schema({
 
 const ThoughtSchema = new Schema({
 
-    thoughText:{
+    thoughtText:{
         type:String,
         required:"A thought is required",
         maxlength:280,
@@ -40,6 +40,12 @@ const ThoughtSchema = new Schema({
         required:true
     },
     reactions:[reactionSchema]
+},
+{
+    toJSON:{
+        virtuals:true
+    },
+    id:false
 })
 
 // get total count of friends of the user
