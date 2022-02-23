@@ -7,7 +7,11 @@ const UserController = {
         User.find({})
             .populate({
                 path:"thoughts",
-                select:"-__v -username"
+                select:"-__v"
+            })
+            .populate({
+                path:"friends",
+                select:"-__v -_id -email -thoughts"
             })
             .select("-__v")
             .then(dbData=>res.json(dbData))
@@ -106,10 +110,35 @@ const UserController = {
                 res.ststau(500).json(er)
             })
     },
+    //adding a friend
+    addFriend:(req,res)=>{
+        User.findOneAndUpdate(
+            {_id:req.params.userId},
+            {$push:{friends:req.params.friendId}},
+            {new:true}
+            //adding friend A to friend B's list 
+            //but we need to also add friend B to A's list
+        )
+        .then(dbData=>{
+            return User.findOneAndUpdate(
+                {_id:req.params.friendId},
+                {$push:{friends:req.params.userId}},
+                {new:true}
+                //adding friend A to friend B's list 
+                //but we need to also add friend B to A's list
+            )
+        })
+        .then(dbData=>{
+            res.json(dbData)
+        })
+        .catch(er=>{
+            console.log(er)
+            res.status(500).json(er);
+        })
+    },
+    //delete a friend
+    deleteFriend:(req,res)=>{
 
-    //testing a user and get ids of thoughts to delete
-    testRoute:(req,res)=>{
-        
     }
 
 }
