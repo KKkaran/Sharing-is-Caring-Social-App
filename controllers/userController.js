@@ -1,5 +1,5 @@
 const {User, Thought} = require ("../models")
-
+const mongoose = require("mongoose")
 const UserController = {
 
     //get all the users
@@ -70,19 +70,46 @@ const UserController = {
     },
     //deleting s user
     deleteUser:(req,res)=>{
-        User.findOneAndDelete({_id:req.params.userId})
-            .then(dbData=>{
-                if(!dbData){
-                    res.json("No user with found that id!!")
-                    
-                }else{
-                    res.json(dbData)
-                }
-            })
+        User.findOne({_id:req.params.userId})
+                            .populate({
+                                path:"thoughts",
+                                select:"-__v -username"
+                            })
+                            .select("-__v")
+                        .then(dbData=>{
+
+                            const thoughtIds = JSON.stringify(dbData.thoughts.map(t=>t._id))
+                            const ids = JSON.parse(thoughtIds)
+                            console.log(typeof(ids))
+                            return Thought.deleteMany(
+                                {_id:{$in:ids}}
+                            )
+                        })
+                        .then(dbData=>{
+                            User.findOneAndDelete({_id:req.params.userId})
+                            .then(dbData=>{
+                                if(!dbData){
+                                    res.json("No user with found that id!!")
+                                    
+                                }else{
+                                    //when the user is deleted we delete his thoughts as well
+                                         res.json("user deleted with his thoughts!!")  
+                                    }
+                            })
+                        })
+                        .catch(er=>{
+                            console.log(er)
+                            res.ststau(500).json(er)
+                        })
             .catch(er=>{
                 console.log(er)
                 res.ststau(500).json(er)
             })
+    },
+
+    //testing a user and get ids of thoughts to delete
+    testRoute:(req,res)=>{
+        
     }
 
 }
