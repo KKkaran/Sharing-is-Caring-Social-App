@@ -24,7 +24,15 @@ const UserController = {
                     select:"-__v -username"
                 })
                 .select("-__v")
-                .then(dbData=>res.json(dbData))
+                .then(dbData=>{
+                    if(!dbData){
+                        res.json("No user with found that id!!")
+                        
+                    }else{
+                        res.json(dbData)
+                    }
+
+                })
                 .catch(er=>{
                     console.log(er)
                     res.status(500).json(er)
@@ -38,9 +46,44 @@ const UserController = {
                 console.log(er)
                 res.ststau(500).json(er)
             })
+    },
+    //updating a user
+    updateUser:(req,res)=>{
+        User.findOneAndUpdate(
+            {_id:req.params.userId},
+            req.body,
+            {new:true}
+        )
+        .then(dbData=>{
+            if(!dbData){
+                res.json("No user with found that id!!")
+                
+            }else{
+                res.json(dbData)
+            }
+
+        })
+        .catch(er=>{
+            console.log(er)
+            res.ststau(500).json(er)
+        })
+    },
+    //deleting s user
+    deleteUser:(req,res)=>{
+        User.findOneAndDelete({_id:req.params.userId})
+            .then(dbData=>{
+                if(!dbData){
+                    res.json("No user with found that id!!")
+                    
+                }else{
+                    res.json(dbData)
+                }
+            })
+            .catch(er=>{
+                console.log(er)
+                res.ststau(500).json(er)
+            })
     }
-
-
 
 }
 

@@ -1,5 +1,5 @@
 const router = require("express").Router()
-const {getAllUsers,getOneUser,createUser} = require("../../controllers/userController")
+const {getAllUsers,getOneUser,createUser,updateUser,deleteUser} = require("../../controllers/userController")
 
 
 router.route("/")
@@ -8,7 +8,8 @@ router.route("/")
 
 router.route("/:userId")
       .get(getOneUser)
-
+      .put(updateUser)
+      .delete(deleteUser)
 
 
 module.exports = router

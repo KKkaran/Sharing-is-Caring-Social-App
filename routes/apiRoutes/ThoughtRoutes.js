@@ -1,6 +1,6 @@
 const router = require("express").Router()
 const { route } = require(".")
-const {getAllThoughts,getOneThought,createThought,createReaction,deleteReaction} = require("../../controllers/thoughtController")
+const {getAllThoughts,getOneThought,createThought,updateThought,deleteThought,createReaction,deleteReaction} = require("../../controllers/thoughtController")
 
 router.route("/")
       .get(getAllThoughts)
@@ -8,6 +8,8 @@ router.route("/")
 
 router.route("/:thoughtId")
       .get(getOneThought)
+      .put(updateThought)
+      .delete(deleteThought)
 
 router.route("/:thoughtId/reactions")
       .post(createReaction)

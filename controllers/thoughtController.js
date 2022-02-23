@@ -16,7 +16,13 @@ const ThoughtController = {
     getOneThought: (req,res)=>{
         Thought.findOne({_id: req.params.thoughtId})
                 .select("-__v")
-                .then(dbData=>res.json(dbData))
+                .then(dbData=>{
+                    if(!dbData){
+                        res.json("No thought found with that id")
+                    }else{
+                        res.json(dbData)
+                    }
+                })
                 .catch(er=>{
                     console.log(er)
                     res.status(500).json(er)
@@ -35,6 +41,43 @@ const ThoughtController = {
             .then(dbData=>{
                 if(!dbData) res.json("no user found with that id")
                 else res.json(dbData)
+            })
+            .catch(er=>{
+                console.log(er)
+                res.ststau(500).json(er)
+            })
+    },
+    //updating a thought
+    updateThought:(req,res)=>{
+        Thought.findOneAndUpdate(
+            {_id:req.params.thoughtId},
+            req.body,
+            {new:true}
+        )
+        .then(dbData=>{
+            if(!dbData){
+                res.json("No thought with found that id!!")
+                
+            }else{
+                res.json(dbData)
+            }
+
+        })
+        .catch(er=>{
+            console.log(er)
+            res.ststau(500).json(er)
+        })
+    },
+    //deleting s thought
+    deleteThought:(req,res)=>{
+        Thought.findOneAndDelete({_id:req.params.thoughtId})
+            .then(dbData=>{
+                if(!dbData){
+                    res.json("No thought with found that id!!")
+                    
+                }else{
+                    res.json(dbData)
+                }
             })
             .catch(er=>{
                 console.log(er)
