@@ -6,12 +6,8 @@ const UserController = {
     getAllUsers: (req,res)=>{
         User.find({})
             .populate({
-                path:"thoughts",
-                select:"-__v"
-            })
-            .populate({
-                path:"friends",
-                select:"-__v -_id -email -thoughts"
+                path:"thoughts friends",
+                select:"-__v -email -thoughts -_id"
             })
             .select("-__v")
             .then(dbData=>res.json(dbData))
@@ -124,8 +120,6 @@ const UserController = {
                 {_id:req.params.friendId},
                 {$push:{friends:req.params.userId}},
                 {new:true}
-                //adding friend A to friend B's list 
-                //but we need to also add friend B to A's list
             )
         })
         .then(dbData=>{
@@ -138,7 +132,27 @@ const UserController = {
     },
     //delete a friend
     deleteFriend:(req,res)=>{
-
+        User.findOneAndUpdate(
+            {_id:req.params.userId},
+            {$pull:{friends:req.params.friendId}},
+            {new:true}
+            //deleting friend A from friend B's list 
+            //but we need to also delete friend B from A's list
+        )
+        .then(dbData=>{
+            return User.findOneAndUpdate(
+                {_id:req.params.friendId},
+                {$pull:{friends:req.params.userId}},
+                {new:true}
+            )
+        })
+        .then(dbData=>{
+            res.json(dbData)
+        })
+        .catch(er=>{
+            console.log(er)
+            res.status(500).json(er);
+        })
     }
 
 }
